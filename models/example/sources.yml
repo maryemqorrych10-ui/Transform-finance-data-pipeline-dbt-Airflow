@@ -1,0 +1,86 @@
+version: 2
+
+
+# sources:
+#   - name: raw
+#     database: finance_db
+#     schema: raw
+
+#     tables:
+#       - name: customers
+#       - name: products
+#       - name: orders
+#       - name: order_items
+sources:
+  - name: raw_data
+    description: "Raw data from the finance database"
+    database: finance_db
+    schema: raw
+
+    tables:
+
+      - name: orders
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique
+
+          - name: customer_id
+            tests:
+              - not_null
+              - relationships:
+                  to: source('raw', 'customers')
+                  field: id
+
+          - name: total_amount
+            tests:
+              - not_null
+
+          - name: status
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['Pending', 'Completed', 'Cancelled']
+
+      - name: customers
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique
+
+          - name: email
+            tests:
+              - not_null
+              - unique
+
+      - name: products
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique
+
+          - name: price
+            tests:
+              - not_null
+
+      - name: order_items
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique
+
+          - name: order_id
+            tests:
+              - relationships:
+                  to: source('raw', 'orders')
+                  field: id
+
+          - name: product_id
+            tests:
+              - relationships:
+                  to: source('raw', 'products')
+                  field: id

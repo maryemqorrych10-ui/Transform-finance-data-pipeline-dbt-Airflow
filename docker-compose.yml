@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  airflow:
+    build: .
+    container_name: airflow_container
+    ports:
+      - "8080:8080"
+      - "8083:8083"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./:/opt/airflow/dbt_project
+      - C:/Users/pc/.dbt:/home/airflow/.dbt
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    command: standalone
